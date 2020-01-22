@@ -24,12 +24,12 @@ namespace WebApplication5.Handlers
       if (context.Exception is HttpRequestException) //Checking for my custom exception type
       {
         status = HttpStatusCode.ServiceUnavailable;
-        message = "Error occured in communication with Stack Exchange API. This can be caused by overthrottling or network problems. For more information check log.";
+        message = "Error occured in communication with Stack Exchange API. This can be caused by overthrottling or network problems. For more information check server log.";
       }
       else
       {
         status = HttpStatusCode.InternalServerError;
-        message = "Server-side error makes it impossible to process request. For more information check log.";
+        message = "Server-side error makes it impossible to process request. For more information check server log.";
       }
 
       logger.LogError(context.Exception, message);

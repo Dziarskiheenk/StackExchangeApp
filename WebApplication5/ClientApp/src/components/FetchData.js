@@ -1,30 +1,33 @@
 import React, { Component } from 'react';
-import { DropdownButton, MenuItem } from 'react-bootstrap';
+import { DropdownButton, MenuItem, Alert } from 'react-bootstrap';
 
 export class FetchData extends Component {
   displayName = FetchData.name
 
   constructor(props) {
     super(props);
-    this.state = { tags: [], loading: true, sortBy: 'popularity' };
+    this.state = { tags: [], loading: true, sortBy: 'popularity', error: undefined };
 
     this.fetchTags();
   }
 
   fetchTags = () => {
-    let ok = false;
     fetch('api/StackExchange/Tags')
-      .then(response => {
-        ok = response.ok;
-        return response.json();
+      .then(async response => {
+        debugger;
+        if (response.ok)
+          return await response.json();
+        else {
+          let errorText = await response.text();
+          debugger;
+          throw new Error(errorText);
+        }
       })
       .then(response => {
-        if (ok) {
-          this.setState({ tags: response, loading: false, sortBy: 'popularity' });
-        }
-        else {
-          this.setState({ error: response, loading: false });
-        }
+        this.setState({ tags: response, loading: false, sortBy: 'popularity' });
+      })
+      .catch(error => {
+        this.setState({ tags: [], error: error, loading: false });
       });
   }
 
@@ -69,6 +72,10 @@ export class FetchData extends Component {
     return (
       <div>
         <h1>Stack Overflow Tags</h1>
+        {this.state.error &&
+          <Alert bsStyle='danger'>
+            An error occured with following message:  {' ' + this.state.error}
+          </Alert>}
         {!this.state.loading &&
           <DropdownButton
             title={'Sort'}
