@@ -14,12 +14,10 @@ export class FetchData extends Component {
   fetchTags = () => {
     fetch('api/StackExchange/Tags')
       .then(async response => {
-        debugger;
         if (response.ok)
           return await response.json();
         else {
           let errorText = await response.text();
-          debugger;
           throw new Error(errorText);
         }
       })
